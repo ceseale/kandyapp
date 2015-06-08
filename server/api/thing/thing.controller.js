@@ -8,7 +8,7 @@
  */
 
 'use strict';
-
+var firebase = require('firebase');
 var _ = require('lodash');
 
 // Get list of things
@@ -19,7 +19,7 @@ exports.index = function(req, res) {
   info : 'Integration with popular tools such as Bower, Grunt, Karma, Mocha, JSHint, Node Inspector, Livereload, Protractor, Jade, Stylus, Sass, CoffeeScript, and Less.'
   }, {
   name : 'Server and Client integration',
-  info : 'Built with a powerful and fun stack: MongoDB, Express, AngularJS, and Node.'
+  info : 'Built with a powerful and funtofirebase stack: MongoDB, Express, AngularJS, and Node.'
   }, {
   name : 'Smart Build System',
   info : 'Build system ignores `spec` files, allowing you to keep tests alongside code. Automatic injection of scripts and styles into your index.html'
@@ -35,3 +35,36 @@ exports.index = function(req, res) {
   }
   ]);
 };
+
+exports.tofirebase = function(req, res) {
+
+  var myFirebaseRef = new firebase("https://aired.firebaseio.com/geotweets/" + req.params.id + "/auth");
+  myFirebaseRef.on('value', function (snapshot){
+    if(snapshot.val() == null){
+     res.send(401)
+    } else {
+      var dataRef = new firebase("https://aired.firebaseio.com/geotweets/" + req.params.id + "/data/" + req.params.name);
+      dataRef.set({main: req.params});
+      dataRef = new firebase("https://aired.firebaseio.com/geotweets/" + req.params.id + "/timestamp");
+      dataRef.set({timestamp: firebase.ServerValue.TIMESTAMP})
+      res.send(200);
+    }
+  })
+  
+
+};
+
+
+exports.downloadData = function(req, res) {
+
+  var myFirebaseRef = new firebase("https://aired.firebaseio.com/geotweets/" + req.params.id + "/data");
+
+  myFirebaseRef.once('value', function (snapshot){
+    res.json(snapshot.val())
+  });
+
+};
+
+
+
+
