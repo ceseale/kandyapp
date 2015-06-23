@@ -3,11 +3,11 @@
  */
 
 'use strict';
-
+var express = require('express'); 
 var errors = require('./components/errors');
 
 module.exports = function(app) {
-
+  app.use(express.static(__dirname + '/static'));
   // Insert routes below
   app.use('/api/tweetstreams', require('./api/tweetstream'));
   app.use('/api/things', require('./api/thing'));
